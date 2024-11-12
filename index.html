@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Data Display</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- PapaParse library -->
+    <style>
+        body { font-family: Arial, sans-serif; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid black; }
+        th, td { padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+    <h1>CSV Data Display</h1>
+    <div id="csvTable"></div>
+
+    <script>
+        // URL to the CSV file in your GitHub repository
+        const csvUrl = "https://raw.githubusercontent.com/your-username/your-repository-name/main/yourfile.csv";
+
+        // Fetch and parse the CSV file
+        fetch(csvUrl)
+            .then(response => response.text())
+            .then(csvText => {
+                // Use PapaParse to parse the CSV
+                Papa.parse(csvText, {
+                    complete: function(results) {
+                        // Display the parsed CSV data in a table
+                        displayCSV(results.data);
+                    }
+                });
+            });
+
+        // Function to display the parsed CSV data in a table
+        function displayCSV(data) {
+            let table = '<table>';
+            table += '<thead><tr>';
+            // Create table headers (first row of CSV)
+            for (let header of data[0]) {
+                table += `<th>${header}</th>`;
+            }
+            table += '</tr></thead><tbody>';
+            // Create table rows
+            for (let row of data.slice(1)) {
+                table += '<tr>';
+                for (let cell of row) {
+                    table += `<td>${cell}</td>`;
+                }
+                table += '</tr>';
+            }
+            table += '</tbody></table>';
+            document.getElementById("csvTable").innerHTML = table;
+        }
+    </script>
+</body>
+</html>
