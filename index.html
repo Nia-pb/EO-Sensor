@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSV Data Display</title>
+    <title>Responsive CSV Table</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
             padding: 20px;
         }
 
@@ -16,35 +17,47 @@
         }
 
         .table-container {
-            max-width: 100%; /* Ensure it doesn't exceed the screen width */
-            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            max-width: 100%; /* Ensure container doesn't exceed screen width */
+            overflow-x: auto; /* Enable horizontal scrolling for smaller screens */
             margin-top: 20px;
-            border: 1px solid #ddd; /* Optional: add a border for the container */
         }
 
         table {
-            width: 100%; /* Ensure the table takes up the full container width */
-            border-collapse: collapse;
-            min-width: 800px; /* Optional: set a minimum width */
+            width: 100%; /* Table takes the full width of the container */
+            border-collapse: collapse; /* Remove gaps between borders */
+            min-width: 600px; /* Optional: Ensures proper layout on very small screens */
         }
 
         th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+            border: 1px solid #ddd; /* Border styling */
+            padding: 8px; /* Padding for readability */
+            text-align: left; /* Align content to the left */
         }
 
         th {
-            background-color: #f2f2f2;
+            background-color: #f4f4f4; /* Subtle background for headers */
+            font-weight: bold; /* Emphasize headers */
         }
 
         tr:nth-child(even) {
-            background-color: #f9f9f9; /* Optional: striped rows */
+            background-color: #f9f9f9; /* Optional: Stripe rows for better readability */
+        }
+
+        @media (max-width: 768px) {
+            th, td {
+                font-size: 14px; /* Adjust font size for smaller screens */
+            }
+        }
+
+        @media (max-width: 480px) {
+            th, td {
+                font-size: 12px; /* Further reduce font size for very small screens */
+            }
         }
     </style>
 </head>
 <body>
-    <h1>CSV Data Display</h1>
+    <h1>Responsive CSV Data Table</h1>
     <div class="table-container">
         <div id="csvTable">Loading data...</div>
     </div>
@@ -69,6 +82,11 @@
             });
 
         function displayCSV(data) {
+            if (data.length === 0) {
+                document.getElementById("csvTable").innerHTML = "<p>No data found in CSV file.</p>";
+                return;
+            }
+
             let table = '<table>';
             table += '<thead><tr>';
             for (let header in data[0]) {
