@@ -20,28 +20,42 @@
 
     <script>
         // URL to the CSV file (replace this with your own GitHub CSV file link)
-        const csvUrl = "https://raw.githubusercontent.com/Nia-pb/EO-Sensor/main/data.csv";
+       const csvUrl = "https://raw.githubusercontent.com/Nia-pb/EO-Sensor/main/data.csv";
 
-        // Fetch and parse the CSV file
-        fetch(csvUrl)
-            .then(response => {
-                if (!response.ok) throw new Error("Network response was not ok");
-                return response.text();
-            })
-            .then(csvText => {
-                // Use PapaParse to parse the CSV
-                Papa.parse(csvText, {
-                    header: true, // Automatically use the first row as headers
-                    skipEmptyLines: true, // Skip empty lines in the CSV
-                    complete: function(results) {
-                        // Display the parsed CSV data in a table
-                        displayCSV(results.data);
-                    }
-                });
-            })
-            .catch(error => {
-                document.getElementById("csvTable").innerHTML = `<p style="color: red;">Error loading CSV: ${error.message}</p>`;
-            });
+fetch(csvUrl)
+    .then(response => response.text())
+    .then(csvText => {
+        Papa.parse(csvText, {
+            header: true,
+            skipEmptyLines: true,
+            complete: function(results) {
+                displayCSV(results.data);
+            }
+        });
+    })
+    .catch(error => {
+        console.error("Error fetching CSV:", error);
+        document.getElementById("csvTable").innerHTML = `<p style="color: red;">Error loading CSV: ${error.message}</p>`;
+    });
+
+function displayCSV(data) {
+    let table = '<table>';
+    table += '<thead><tr>';
+    for (let header in data[0]) {
+        table += `<th>${header}</th>`;
+    }
+    table += '</tr></thead><tbody>';
+    for (let row of data) {
+        table += '<tr>';
+        for (let cell in row) {
+            table += `<td>${row[cell]}</td>`;
+        }
+        table += '</tr>';
+    }
+    table += '</tbody></table>';
+    document.getElementById("csvTable").innerHTML = table;
+}
+
 
         // Function to display the parsed CSV data in a table
         function displayCSV(data) {
