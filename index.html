@@ -4,74 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CSV Data Display</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script> <!-- PapaParse library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        h1 { text-align: center; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        table, th, td { border: 1px solid black; }
-        th, td { padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .table-container {
+            max-width: 100%; /* Ensure it doesn't exceed the screen width */
+            overflow-x: auto; /* Enable horizontal scrolling if needed */
+            margin-top: 20px;
+            border: 1px solid #ddd; /* Optional: add a border for the container */
+        }
+
+        table {
+            width: 100%; /* Ensure the table takes up the full container width */
+            border-collapse: collapse;
+            min-width: 800px; /* Optional: set a minimum width */
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9; /* Optional: striped rows */
+        }
     </style>
 </head>
 <body>
     <h1>CSV Data Display</h1>
-    <div id="csvTable">Loading data...</div>
+    <div class="table-container">
+        <div id="csvTable">Loading data...</div>
+    </div>
 
     <script>
-        // URL to the CSV file (replace this with your own GitHub CSV file link)
-       const csvUrl = "https://raw.githubusercontent.com/Nia-pb/EO-Sensor/main/data.csv";
+        const csvUrl = "https://raw.githubusercontent.com/Nia-pb/EO-Sensor/main/data.csv";
 
-fetch(csvUrl)
-    .then(response => response.text())
-    .then(csvText => {
-        Papa.parse(csvText, {
-            header: true,
-            skipEmptyLines: true,
-            complete: function(results) {
-                displayCSV(results.data);
-            }
-        });
-    })
-    .catch(error => {
-        console.error("Error fetching CSV:", error);
-        document.getElementById("csvTable").innerHTML = `<p style="color: red;">Error loading CSV: ${error.message}</p>`;
-    });
+        fetch(csvUrl)
+            .then(response => response.text())
+            .then(csvText => {
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        displayCSV(results.data);
+                    }
+                });
+            })
+            .catch(error => {
+                console.error("Error fetching CSV:", error);
+                document.getElementById("csvTable").innerHTML = `<p style="color: red;">Error loading CSV: ${error.message}</p>`;
+            });
 
-function displayCSV(data) {
-    let table = '<table>';
-    table += '<thead><tr>';
-    for (let header in data[0]) {
-        table += `<th>${header}</th>`;
-    }
-    table += '</tr></thead><tbody>';
-    for (let row of data) {
-        table += '<tr>';
-        for (let cell in row) {
-            table += `<td>${row[cell]}</td>`;
-        }
-        table += '</tr>';
-    }
-    table += '</tbody></table>';
-    document.getElementById("csvTable").innerHTML = table;
-}
-
-
-        // Function to display the parsed CSV data in a table
         function displayCSV(data) {
-            if (data.length === 0) {
-                document.getElementById("csvTable").innerHTML = "<p>No data found in CSV file.</p>";
-                return;
-            }
-
             let table = '<table>';
             table += '<thead><tr>';
-            // Create table headers
             for (let header in data[0]) {
                 table += `<th>${header}</th>`;
             }
             table += '</tr></thead><tbody>';
-            // Create table rows
             for (let row of data) {
                 table += '<tr>';
                 for (let cell in row) {
